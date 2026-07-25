@@ -697,7 +697,7 @@ void ReinitializeTexture()
 	if (left)
 		left.reset();
 	if (right)
-		right.reset()
+		right.reset();
 
 	if (renderer == nullptr)
 		return;
