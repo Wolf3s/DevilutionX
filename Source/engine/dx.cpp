@@ -257,22 +257,24 @@ void RenderPresent()
 		if (!SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255)) ErrSdl();
 		if (!SDL_RenderClear(renderer)) ErrSdl();
 		if (!SDL_UpdateTexture(left.get(), nullptr, surface->pixels, surface->pitch)) ErrSdl();
-		if (!SDL_UpdateTexture(right.get(), nullptr,reinterpret_cast<char *>( surface->pixels) + surface->pitch / 2, surface->pitch)) ErrSdl();
+		if (!SDL_UpdateTexture(right.get(), nullptr, reinterpret_cast<char *>(surface->pixels) + surface->pitch - (surface->pitch / gnScreenWidth) * 512, surface->pitch)) ErrSdl();
 
 		SDL_Rect leftRect = MakeSdlRect(0, 0, gnScreenWidth / 2, gnScreenHeight);
-		if (!SDL_RenderCopy(renderer, left.get(), nullptr, &leftRect)) ErrSdl();
-		SDL_Rect rightRect = MakeSdlRect(gnScreenWidth / 2, 0, gnScreenWidth / 2, gnScreenHeight);
-		if (!SDL_RenderCopy(renderer, right.get(), nullptr, &rightRect)) ErrSdl();
+		if (!SDL_RenderCopy(renderer, left.get(), leftRect, &leftRect)) ErrSdl();
+		SDL_Rect rightSrcRect = MakeSdlRect(512 - gnScreenWidth / 2 - gnScreenWidth % 2 - 1, 0, gnScreenWidth / 2 + gnScreenWidth % 2, gnScreenHeight);
+		SDL_Rect rightDstRect = MakeSdlRect(gnScreenWidth / 2, 0, gnScreenWidth / 2 + gnScreenWidth % 2, gnScreenHeight);
+		if (!SDL_RenderCopy(renderer, right.get(), &rightSrcRect, &rightDstRect)) ErrSdl();
 #else
 		if (SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255) <= -1) ErrSdl();
 		if (SDL_RenderClear(renderer) <= -1) ErrSdl();
 		if (SDL_UpdateTexture(left.get(), nullptr, surface->pixels, surface->pitch) <= -1) ErrSdl();
-		if (SDL_UpdateTexture(right.get(), nullptr, reinterpret_cast<char *>(surface->pixels) + surface->pitch / 2, surface->pitch) <= -1) ErrSdl();
-		
+		if (SDL_UpdateTexture(right.get(), nullptr, reinterpret_cast<char *>(surface->pixels) + surface->pitch - (surface->pitch / gnScreenWidth) * 512, surface->pitch) <= -1) ErrSdl();
+
 		SDL_Rect leftRect = MakeSdlRect(0, 0, gnScreenWidth / 2, gnScreenHeight);
-		if (SDL_RenderCopy(renderer, left.get(), nullptr, &leftRect) <= -1) ErrSdl();
-		SDL_Rect rightRect = MakeSdlRect(gnScreenWidth / 2, 0, gnScreenWidth / 2, gnScreenHeight);
-		if (SDL_RenderCopy(renderer, right.get(), nullptr, &rightRect) <= -1) ErrSdl();
+		if (SDL_RenderCopy(renderer, left.get(), &leftRect, &leftRect) <= -1) ErrSdl();
+		SDL_Rect rightSrcRect = MakeSdlRect(512 - gnScreenWidth / 2 - gnScreenWidth % 2 - 1, 0, gnScreenWidth / 2 + gnScreenWidth % 2, gnScreenHeight);
+		SDL_Rect rightDstRect = MakeSdlRect(gnScreenWidth / 2, 0, gnScreenWidth / 2 + gnScreenWidth % 2, gnScreenHeight);
+		if (SDL_RenderCopy(renderer, right.get(), &rightSrcRect, &rightDstRect) <= -1) ErrSdl();
 #endif
 
 		if (ControlMode == ControlTypes::VirtualGamepad) {

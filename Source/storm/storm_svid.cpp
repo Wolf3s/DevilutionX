@@ -413,8 +413,8 @@ bool SVidPlayBegin(const char *filename, int flags)
 	if (renderer != nullptr) {
 		const int renderWidth = static_cast<int>(SVidWidth);
 		const int renderHeight = static_cast<int>(SVidHeight);
-		left = SDLWrap::CreateTexture(renderer, DEVILUTIONX_DISPLAY_TEXTURE_FORMAT, SDL_TEXTUREACCESS_STREAMING, gnScreenWidth / 2, gnScreenHeight);
-		right = SDLWrap::CreateTexture(renderer, DEVILUTIONX_DISPLAY_TEXTURE_FORMAT, SDL_TEXTUREACCESS_STREAMING, gnScreenWidth / 2, gnScreenHeight);
+		left = SDLWrap::CreateTexture(renderer, DEVILUTIONX_DISPLAY_TEXTURE_FORMAT, SDL_TEXTUREACCESS_STREAMING, 512, gnScreenHeight);
+		right = SDLWrap::CreateTexture(renderer, DEVILUTIONX_DISPLAY_TEXTURE_FORMAT, SDL_TEXTUREACCESS_STREAMING, 512, gnScreenHeight);
 		if (
 #ifdef USE_SDL3
 		    !SDL_SetRenderLogicalPresentation(renderer, renderWidth, renderHeight,
@@ -549,8 +549,8 @@ void SVidPlayEnd()
 
 #ifndef USE_SDL1
 	if (renderer != nullptr) {
-		left = SDLWrap::CreateTexture(renderer, DEVILUTIONX_DISPLAY_TEXTURE_FORMAT, SDL_TEXTUREACCESS_STREAMING, renderWidth / 2, renderHeight);
-		right = SDLWrap::CreateTexture(renderer, DEVILUTIONX_DISPLAY_TEXTURE_FORMAT, SDL_TEXTUREACCESS_STREAMING, renderWidth / 2, renderHeight);
+		left = SDLWrap::CreateTexture(renderer, DEVILUTIONX_DISPLAY_TEXTURE_FORMAT, SDL_TEXTUREACCESS_STREAMING, 512, renderHeight);
+		right = SDLWrap::CreateTexture(renderer, DEVILUTIONX_DISPLAY_TEXTURE_FORMAT, SDL_TEXTUREACCESS_STREAMING, 512, renderHeight);
 		if (
 #ifdef USE_SDL3
 		    !SDL_SetRenderLogicalPresentation(renderer, gnScreenWidth, gnScreenHeight,
