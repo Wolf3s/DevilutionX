@@ -44,7 +44,8 @@ namespace devilution {
 int refreshDelay;
 SDL_Renderer *renderer;
 #ifndef USE_SDL1
-SDLTextureUniquePtr texture;
+SDLTextureUniquePtr left;
+SDLTextureUniquePtr right;
 #endif
 
 /** Currently active palette */
@@ -133,7 +134,8 @@ void dx_cleanup()
 	Palette = nullptr;
 	RendererTextureSurface = nullptr;
 #ifndef USE_SDL1
-	texture = nullptr;
+	left = nullptr;
+	right = nullptr;
 	FreeVirtualGamepadTextures();
 	if (*GetOptions().Graphics.upscale)
 		SDL_DestroyRenderer(renderer);
@@ -254,13 +256,23 @@ void RenderPresent()
 #ifdef USE_SDL3
 		if (!SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255)) ErrSdl();
 		if (!SDL_RenderClear(renderer)) ErrSdl();
-		if (!SDL_UpdateTexture(texture.get(), nullptr, surface->pixels, surface->pitch)) ErrSdl();
-		if (!SDL_RenderTexture(renderer, texture.get(), nullptr, nullptr)) ErrSdl();
+		if (!SDL_UpdateTexture(left.get(), nullptr, surface->pixels, surface->pitch)) ErrSdl();
+		if (!SDL_UpdateTexture(right.get(), nullptr,reinterpret_cast<char *>( surface->pixels) + surface->pitch / 2, surface->pitch)) ErrSdl();
+
+		SDL_Rect leftRect = MakeSdlRect(0, 0, gnScreenWidth / 2, gnScreenHeight);
+		if (!SDL_RenderCopy(renderer, left.get(), nullptr, &leftRect)) ErrSdl();
+		SDL_Rect rightRect = MakeSdlRect(gnScreenWidth / 2, 0, gnScreenWidth / 2, gnScreenHeight);
+		if (!SDL_RenderCopy(renderer, right.get(), nullptr, &rightRect)) ErrSdl();
 #else
 		if (SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255) <= -1) ErrSdl();
 		if (SDL_RenderClear(renderer) <= -1) ErrSdl();
-		if (SDL_UpdateTexture(texture.get(), nullptr, surface->pixels, surface->pitch) <= -1) ErrSdl();
-		if (SDL_RenderCopy(renderer, texture.get(), nullptr, nullptr) <= -1) ErrSdl();
+		if (SDL_UpdateTexture(left.get(), nullptr, surface->pixels, surface->pitch) <= -1) ErrSdl();
+		if (SDL_UpdateTexture(right.get(), nullptr, reinterpret_cast<char *>(surface->pixels) + surface->pitch / 2, surface->pitch) <= -1) ErrSdl();
+		
+		SDL_Rect leftRect = MakeSdlRect(0, 0, gnScreenWidth / 2, gnScreenHeight);
+		if (SDL_RenderCopy(renderer, left.get(), nullptr, &leftRect) <= -1) ErrSdl();
+		SDL_Rect rightRect = MakeSdlRect(gnScreenWidth / 2, 0, gnScreenWidth / 2, gnScreenHeight);
+		if (SDL_RenderCopy(renderer, right.get(), nullptr, &rightRect) <= -1) ErrSdl();
 #endif
 
 		if (ControlMode == ControlTypes::VirtualGamepad) {

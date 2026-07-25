@@ -694,8 +694,10 @@ bool SpawnWindow(const char *lpWindowName)
 #ifndef USE_SDL1
 void ReinitializeTexture()
 {
-	if (texture)
-		texture.reset();
+	if (left)
+		left.reset();
+	if (right)
+		right.reset()
 
 	if (renderer == nullptr)
 		return;
@@ -708,11 +710,13 @@ void ReinitializeTexture()
 		Log("SDL_SetDefaultTextureScaleMode: {}", SDL_GetError());
 		SDL_ClearError();
 	}
-	texture = SDLWrap::CreateTexture(renderer, DEVILUTIONX_DISPLAY_TEXTURE_FORMAT, SDL_TEXTUREACCESS_STREAMING, gnScreenWidth, gnScreenHeight);
+	left = SDLWrap::CreateTexture(renderer, DEVILUTIONX_DISPLAY_TEXTURE_FORMAT, SDL_TEXTUREACCESS_STREAMING, gnScreenWidth / 2, gnScreenHeight);
+	right = SDLWrap::CreateTexture(renderer, DEVILUTIONX_DISPLAY_TEXTURE_FORMAT, SDL_TEXTUREACCESS_STREAMING, gnScreenWidth / 2, gnScreenHeight);
 #else
 	auto quality = StrCat(static_cast<int>(*GetOptions().Graphics.scaleQuality));
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, quality.c_str());
-	texture = SDLWrap::CreateTexture(renderer, DEVILUTIONX_DISPLAY_TEXTURE_FORMAT, SDL_TEXTUREACCESS_STREAMING, gnScreenWidth, gnScreenHeight);
+	left = SDLWrap::CreateTexture(renderer, DEVILUTIONX_DISPLAY_TEXTURE_FORMAT, SDL_TEXTUREACCESS_STREAMING, gnScreenWidth / 2, gnScreenHeight);
+	right = SDLWrap::CreateTexture(renderer, DEVILUTIONX_DISPLAY_TEXTURE_FORMAT, SDL_TEXTUREACCESS_STREAMING, gnScreenWidth / 2, gnScreenHeight);
 #endif
 }
 
@@ -792,11 +796,11 @@ void ReinitializeRenderer()
 		ReinitializeTexture();
 
 #ifdef USE_SDL3
-		RendererTextureSurface = SDLSurfaceUniquePtr { SDL_CreateSurface(gnScreenWidth, gnScreenHeight, texture->format) };
+		RendererTextureSurface = SDLSurfaceUniquePtr { SDL_CreateSurface(gnScreenWidth, gnScreenHeight, left->format) };
 		if (RendererTextureSurface == nullptr) ErrSdl();
 #else
 		Uint32 format;
-		if (SDL_QueryTexture(texture.get(), &format, nullptr, nullptr, nullptr) < 0) ErrSdl();
+		if (SDL_QueryTexture(left.get(), &format, nullptr, nullptr, nullptr) < 0) ErrSdl();
 		RendererTextureSurface = SDLWrap::CreateRGBSurfaceWithFormat(0, gnScreenWidth, gnScreenHeight, SDL_BITSPERPIXEL(format), format);
 #endif
 	} else {

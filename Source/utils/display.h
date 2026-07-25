@@ -29,7 +29,8 @@ extern SDL_Window *window;
 extern SDL_Window *ghMainWnd;
 extern SDL_Renderer *renderer;
 #ifndef USE_SDL1
-extern SDLTextureUniquePtr texture;
+extern SDLTextureUniquePtr left;
+extern SDLTextureUniquePtr right;
 #endif
 
 extern SDLPaletteUniquePtr Palette;
