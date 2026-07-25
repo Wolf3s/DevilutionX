@@ -1280,7 +1280,7 @@ void DiabloInit()
 		}
 	}
 
-#ifndef USE_SDL1
+#if !defined(USE_SDL1) && !defined(PSP)
 	InitializeVirtualGamepad();
 #endif
 
