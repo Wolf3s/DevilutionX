@@ -259,11 +259,11 @@ void RenderPresent()
 		if (!SDL_UpdateTexture(left.get(), nullptr, surface->pixels, surface->pitch)) ErrSdl();
 		if (!SDL_UpdateTexture(right.get(), nullptr, reinterpret_cast<char *>(surface->pixels) + surface->pitch - (surface->pitch / gnScreenWidth) * 512, surface->pitch)) ErrSdl();
 
-		SDL_Rect leftRect = MakeSdlRect(0, 0, gnScreenWidth / 2, gnScreenHeight);
-		if (!SDL_RenderCopy(renderer, left.get(), leftRect, &leftRect)) ErrSdl();
-		SDL_Rect rightSrcRect = MakeSdlRect(512 - gnScreenWidth / 2 - gnScreenWidth % 2 - 1, 0, gnScreenWidth / 2 + gnScreenWidth % 2, gnScreenHeight);
-		SDL_Rect rightDstRect = MakeSdlRect(gnScreenWidth / 2, 0, gnScreenWidth / 2 + gnScreenWidth % 2, gnScreenHeight);
-		if (!SDL_RenderCopy(renderer, right.get(), &rightSrcRect, &rightDstRect)) ErrSdl();
+		const SDL_FRect leftRect = MakeSdlFRect(0, 0, gnScreenWidth / 2, gnScreenHeight);
+		if (!SDL_RenderTexture(renderer, left.get(), &leftRect, &leftRect)) ErrSdl();
+		const SDL_FRect rightSrcRect = MakeSdlFRect(512 - gnScreenWidth / 2 - gnScreenWidth % 2 - 1, 0, gnScreenWidth / 2 + gnScreenWidth % 2, gnScreenHeight);
+		const SDL_FRect rightDstRect = MakeSdlFRect(gnScreenWidth / 2, 0, gnScreenWidth / 2 + gnScreenWidth % 2, gnScreenHeight);
+		if (!SDL_RenderTexture(renderer, right.get(), &rightSrcRect, &rightDstRect)) ErrSdl();
 #else
 		if (SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255) <= -1) ErrSdl();
 		if (SDL_RenderClear(renderer) <= -1) ErrSdl();

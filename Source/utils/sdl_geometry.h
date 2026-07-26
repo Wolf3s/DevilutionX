@@ -39,4 +39,27 @@ constexpr Rectangle MakeRectangle(SDL_Rect sdlRect)
 {
 	return { Point { sdlRect.x, sdlRect.y }, Size { sdlRect.w, sdlRect.h } };
 }
+#ifdef USE_SDL3
+/**
+ * @brief Same as constructing directly but avoids type conversion warnings.
+ */
+inline SDL_FRect MakeSdlFRect(
+    decltype(SDL_FRect {}.x) x, decltype(SDL_FRect {}.y) y,
+    decltype(SDL_FRect {}.w) w, decltype(SDL_FRect {}.h) h)
+{
+	return SDL_FRect { x, y, w, h };
+}
+
+inline SDL_FRect MakeSdlFRect(Rectangle rect)
+{
+	return MakeSdlFRect(rect.position.x, rect.position.y, rect.size.width, rect.size.height);
+}
+
+constexpr Rectangle MakeRectangle(SDL_FRect sdlRect)
+{
+	return { Point { sdlRect.x, sdlRect.y }, Size { sdlRect.w, sdlRect.h } };
+}
+
+#endif
+
 } // namespace devilution
