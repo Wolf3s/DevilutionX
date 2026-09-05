@@ -274,7 +274,11 @@ endif()
 #
 # PS4 toolchain crashes in `create-fself` when linking with these flags, so we exclude it:
 # https://github.com/PacBrew/ps4-openorbis/issues/8
-if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang" AND NOT PS4)
+# On m68k-amigaos, `--gc-sections` discards static constexpr data that is still
+# referenced (magic_enum's per-enum name tables are the visible casualty: the
+# string_views survive with correct lengths but point at collected storage, so
+# every enum name reads as garbage). Excluded here for the same reason as PS4.
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang" AND NOT PS4 AND NOT AMIGA)
   add_compile_options("$<$<NOT:$<CONFIG:Debug>>:-ffunction-sections;-fdata-sections>")
   if(APPLE)
     add_link_options("$<$<NOT:$<CONFIG:Debug>>:LINKER:-dead_strip>")
@@ -352,9 +356,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # for clang-tidy
 set(CMAKE_THREAD_PREFER_PTHREAD ON)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
-if(NOT TARGET_PLATFORM STREQUAL "dos")
-  find_package(Threads REQUIRED)
-endif()
+find_package(Threads REQUIRED)
 
 # Dependencies must be included after Platforms.
 include(Dependencies)

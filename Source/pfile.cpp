@@ -711,7 +711,7 @@ bool pfile_ui_set_hero_infos(bool (*uiAddHeroInfo)(_uiheroinfo *))
 			if (ReadHero(*archive, &pkplr)) {
 				_uiheroinfo uihero;
 				uihero.saveNumber = i;
-				strcpy(hero_names[i], pkplr.pName);
+				CopyUtf8(hero_names[i], std::string_view(pkplr.pName, PlayerNameLength), sizeof(hero_names[i]));
 				const bool hasSaveGame = ArchiveContainsGame(*archive);
 				if (hasSaveGame)
 					pkplr.bIsHellfire = gbIsHellfireSaveGame ? 1 : 0;

@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 #include "cursor.h"
+#include "cursor_defs.hpp"
 #include "engine/clx_sprite.hpp"
 #include "engine/load_cel.hpp"
 #include "engine/load_file.hpp"
@@ -367,8 +368,9 @@ void TalkToWitch(Player &player, Towner & /*witch*/)
 				}
 			}
 			if (Quests[Q_MUSHROOM]._qvar1 >= QS_MUSHGIVEN) {
-				if (HasInventoryItemWithId(player, IDI_BRAIN)) {
+				if (HasInventoryItemWithId(player, IDI_BRAIN) && Quests[Q_MUSHROOM]._qvar2 != TEXT_MUSH11) {
 					Quests[Q_MUSHROOM]._qmsg = TEXT_MUSH11;
+					Quests[Q_MUSHROOM]._qvar2 = TEXT_MUSH11;
 					NetSendCmdQuest(true, Quests[Q_MUSHROOM]);
 					InitQTextMsg(TEXT_MUSH11);
 					return;

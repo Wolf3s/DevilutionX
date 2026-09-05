@@ -1,3 +1,5 @@
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/threads-stub")
+
 set(BUILD_TESTING OFF)
 set(ASAN OFF)
 set(UBSAN OFF)
@@ -8,9 +10,12 @@ set(SDL1_VIDEO_MODE_BPP 8)
 set(DEVILUTIONX_SYSTEM_BZIP2 OFF)
 set(DEVILUTIONX_SYSTEM_ZLIB OFF)
 
-# Lower the optimization level to O2 because there are issues with O3.
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O2")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
+# Disable dead code elimination and sibling call optimization
+# because m68k-amigaos GCC miscompiles with these optimizations.
+set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} -fno-ext-dce -fno-optimize-sibling-calls")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -fno-ext-dce -fno-optimize-sibling-calls")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -fno-ext-dce -fno-optimize-sibling-calls")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fno-ext-dce -fno-optimize-sibling-calls")
 
 # `fseeko` fails to link on Amiga.
 add_definitions(-Dfseeko=fseek)
